@@ -1,0 +1,34 @@
+<resources>
+
+    <!-- App -->
+    <string name="app_name">Stock Manager</string>
+    <string name="app_description">A app de gestão de estoque</string>
+
+    <!-- NaN -->
+    <string name="error_occurred">Ocorreu um erro. Por favor, tente novamente mais tarde.</string>
+    <string name="cpf">CPF</string>
+    <string name="cpfExample">Exemplo: 010.501.244-34</string>
+    <string name="invalid_cpf">CPF inválido!</string>
+    <string name="login">Entrar</string>
+    <string name="field_cannot_empty">Este campo não pode ficar vazio!</string>
+    <string name="made_with_love">Feito com ❤️ por HarukaYamamoto0</string>
+    <string name="birthDate">Data de Nascimento</string>
+    <string name="birthDateExample">Exemplo: 01/06/2002</string>
+    <string name="no_empty_fields">Ainda existem campos para preencher!</string>
+    <string name="invalid_credentials">Credenciais inválidas. Verifique se sua senha está correta.</string>
+    <string name="login_successful">Login bem-sucedido 🎉</string>
+    <string name="see_less">Ver Menos</string>
+    <string name="see_more">Ver Mais</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="read_barcode">Ler código de barras</string>
+    <string name="invalid_date_format">O formato da data é 01/06/2002</string>
+    <string name="no_data">Nenhum dado encontrado...</string>
+
+    <!-- Errors -->
+    <string name="error_io">Erro de comunicação. Verifique sua conexão com a internet e tente novamente.</string>
+    <string name="error_http">Erro na solicitação. Código: %1$d</string>
+    <string name="error_generic">Ocorreu um erro inesperado. Tente novamente mais tarde.</string>
+    <string name="registered_products">%1$d produtos registrados</string>
+
+</resources>

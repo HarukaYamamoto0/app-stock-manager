@@ -1,0 +1,160 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true"
+    android:orientation="vertical"
+    tools:context=".ui.activities.MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/layout_infos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/secondary_dark"
+        android:elevation="9dp"
+        android:paddingHorizontal="@dimen/padding_activities_horizontal"
+        android:paddingTop="@dimen/padding_activities_vertical"
+        android:paddingBottom="15dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageview_user_avatar"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginRight="15dp"
+            android:padding="3dp"
+            app:shapeAppearanceOverlay="@style/circleImageView"
+            app:srcCompat="@drawable/ic_avatar"
+            app:strokeColor="@color/secondary"
+            app:strokeWidth="1dp" />
+
+        <TextView
+            android:id="@+id/textview_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:layout_toEndOf="@id/imageview_user_avatar"
+            android:text="Antonio Albert M C"
+            android:textColor="@color/secondary"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textview_cpf_of_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview_username"
+            android:layout_marginTop="7dp"
+            android:layout_toEndOf="@id/imageview_user_avatar"
+            android:text="CPF: ***.737.***-50"
+            android:textColor="@color/text_color"
+            android:textSize="13dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_edittext_search_by_sector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview_cpf_of_user"
+            android:layout_marginTop="45dp"
+            android:background="@android:color/transparent"
+            android:hint="Procure por um setor"
+            android:textColorHint="@color/primary"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:hintTextAppearance="@style/hint_bold"
+            app:hintTextColor="@color/secondary"
+            app:startIconDrawable="@drawable/ic_search"
+            app:startIconTint="@color/primary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edittext_search_by_sector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_edittext_with_outline_box"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/secondary"
+                android:textCursorDrawable="@drawable/cursor" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_infos"
+        android:background="@color/background"
+        android:paddingHorizontal="@dimen/padding_activities_horizontal"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_infos">
+
+        <TextView
+            android:id="@+id/textview_title_sectors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Setores"
+            android:textColor="@color/text_color"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/button_see_more_sectors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/primary"
+            android:textSize="15dp"
+            tools:text="Veja Mais" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleview_sector_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/textview_title_sectors"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:overScrollMode="never"
+            android:scrollIndicators="none"
+            android:scrollbarSize="0dp"
+            tools:listitem="@layout/layout_sector_icon" />
+    </RelativeLayout>
+
+    <ViewStub
+        android:id="@+id/viewStub_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_infos"
+        android:background="@color/background"
+        android:layout="@layout/layout_loading_data"
+        android:paddingHorizontal="@dimen/padding_activities_horizontal"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_infos" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_new_sector"
+        style="?attr/floatingActionButtonLargeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:backgroundTint="@color/secondary"
+        android:elevation="9dp"
+        android:importantForAccessibility="no"
+        android:padding="15dp"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.fab.rectangle"
+        app:srcCompat="@drawable/ic_add"
+        app:tint="@color/black" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
