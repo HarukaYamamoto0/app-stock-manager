@@ -10,24 +10,25 @@ import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.harukadev.stockmanager.R
 import com.harukadev.stockmanager.adapter.SectorIconAdapter
 import com.harukadev.stockmanager.api.SectorAPI
 import com.harukadev.stockmanager.data.SectorData
+import com.harukadev.stockmanager.ui.fragments.sector.NewSectorDialogFragment
+import com.harukadev.stockmanager.ui.fragments.sector.EditSectorDialogFragment
+import com.harukadev.stockmanager.ui.fragments.sector.DeleteSectorDialogFragment
 import com.harukadev.stockmanager.utils.CPFMask
 import com.harukadev.stockmanager.utils.SharedPreferencesManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.harukadev.stockmanager.ui.fragments.NewSectorDialogFragment
-import android.view.ViewStub
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.*
 
-class MainActivity : AppCompatActivity(), NewSectorDialogFragment.NewItemListener {
+class MainActivity :
+    AppCompatActivity(),
+    NewSectorDialogFragment.NewItemListener,
+    EditSectorDialogFragment.EditItemListener,
+	DeleteSectorDialogFragment.DeleteItemListener {
 
-    private lateinit var editTextSearchSector: TextInputEditText
+    private lateinit var editTextSearchSector: EditText
     private lateinit var btnSeeMore: TextView
     private lateinit var sectorIconRecyclerView: RecyclerView
     private lateinit var adapter: SectorIconAdapter
@@ -37,7 +38,8 @@ class MainActivity : AppCompatActivity(), NewSectorDialogFragment.NewItemListene
     private lateinit var usernameTextView: TextView
     private lateinit var cpfTextView: TextView
     private lateinit var fab: FloatingActionButton
-    private lateinit var viewStubContainer: ViewStub
+    private lateinit var loadingDataLayout: LinearLayout
+    private lateinit var noDataLayout: LinearLayout
     private var productsToShow: Int = 6
     private val sectorApi = SectorAPI()
     private lateinit var sharedPreferencesManager: SharedPreferencesManager
@@ -59,16 +61,16 @@ class MainActivity : AppCompatActivity(), NewSectorDialogFragment.NewItemListene
         sectorIconRecyclerView = findViewById(R.id.recycleview_sector_icon)
         btnSeeMore = findViewById(R.id.button_see_more_sectors)
         layout2RelativeLayout = findViewById(R.id.layout_2)
-        viewStubContainer = findViewById(R.id.viewStub_container)
+        loadingDataLayout = findViewById(R.id.layout_loading_data)
+        noDataLayout = findViewById(R.id.layout_no_sectors)
         fab = findViewById(R.id.fab_new_sector)
 
         userAvatarImageView = findViewById(R.id.imageview_user_avatar)
         usernameTextView = findViewById(R.id.textview_username)
         cpfTextView = findViewById(R.id.textview_cpf_of_user)
 
-        viewStubContainer.layoutResource = R.layout.layout_loading_data
-        viewStubContainer.inflate()
-        layout2RelativeLayout.visibility = View.INVISIBLE
+        loadingDataLayout.visibility = View.VISIBLE
+        layout2RelativeLayout.visibility = View.GONE
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -87,9 +89,9 @@ class MainActivity : AppCompatActivity(), NewSectorDialogFragment.NewItemListene
             .load(avatarUrl)
             .into(userAvatarImageView)
 
-        usernameTextView.text = sharedPreferencesManager.getString("name", "???")
+        usernameTextView.text = sharedPreferencesManager.getString("name", "SEM NOME")
 
-        val cpf = sharedPreferencesManager.getString("cpf", "???")
+        val cpf = sharedPreferencesManager.getString("cpf", "Sem CPF")
         cpfTextView.text = CPFMask.formatCPF(cpf)
     }
 
@@ -99,15 +101,13 @@ class MainActivity : AppCompatActivity(), NewSectorDialogFragment.NewItemListene
             adapter.setData(allSectors.take(productsToShow))
 
             if (allSectors.isEmpty()) {
-                viewStubContainer.layoutResource = R.layout.layout_no_data
-                viewStubContainer.inflate()
+                noDataLayout.visibility = View.VISIBLE
+            } else {
+                loadingDataLayout.visibility = View.GONE
+                layout2RelativeLayout.visibility = View.VISIBLE
             }
-
-            viewStubContainer.visibility = View.GONE
-            layout2RelativeLayout.visibility = View.VISIBLE
         } catch (e: Exception) {
-            Log.e(TAG, e.message ?: "Unknown error")
-            Toast.makeText(this@MainActivity, getString(R.string.error_generic), Toast.LENGTH_SHORT).show()
+            handleException(e)
         }
     }
 
@@ -124,8 +124,27 @@ class MainActivity : AppCompatActivity(), NewSectorDialogFragment.NewItemListene
                 }
             },
             object : SectorIconAdapter.OnSectorLongClickListener {
-                override fun onSectorLongClick(sector: SectorData) {
-                    showMessage(sector.name)
+                override fun onSectorLongClick(sector: SectorData, sectorView: View) {
+                    val popup = PopupMenu(this@MainActivity, sectorView)
+                    popup.inflate(R.menu.sector_options)
+                    popup.setOnMenuItemClickListener { menuItem ->
+						val itemId = menuItem.itemId
+						
+						if (itemId == R.id.menu_edit_sector) {
+							val dialog = EditSectorDialogFragment()
+							dialog.setSectorData(sector)
+							dialog.setEditItemListener(this@MainActivity)
+							dialog.show(supportFragmentManager, EditSectorDialogFragment.TAG)
+						} else if (itemId == R.id.menu_delete_sector) {
+							val dialog = DeleteSectorDialogFragment()
+							dialog.setSectorData(sector)
+							dialog.setDeleteItemListener(this@MainActivity)
+							dialog.show(supportFragmentManager, DeleteSectorDialogFragment.TAG)
+						}
+						
+                        true
+                    }
+                    popup.show()
                 }
             }
         )
@@ -169,10 +188,26 @@ class MainActivity : AppCompatActivity(), NewSectorDialogFragment.NewItemListene
     }
 
     override fun onNewItemAdded() {
+        noDataLayout.visibility = View.GONE
+        loadingDataLayout.visibility = View.GONE
+        layout2RelativeLayout.visibility = View.VISIBLE
         startLoading()
+    }
+
+    override fun onEditedItem() {
+        startLoading()
+    }
+	
+	override fun onDeletedItem() {
+		startLoading()
     }
 
     private fun showMessage(message: String) {
         Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleException(e: Exception) {
+        Log.e(TAG, e.message ?: "Unknown error")
+        Toast.makeText(this@MainActivity, getString(R.string.error_generic), Toast.LENGTH_SHORT).show()
     }
 }

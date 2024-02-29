@@ -1,4 +1,4 @@
-package com.harukadev.stockmanager.ui.fragments
+package com.harukadev.stockmanager.ui.fragments.sector
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -18,62 +18,68 @@ import com.harukadev.stockmanager.R
 import com.harukadev.stockmanager.api.SectorAPI
 import com.harukadev.stockmanager.data.SectorData
 import kotlinx.coroutines.*
+import android.text.InputFilter
 
-class NewSectorDialogFragment : DialogFragment() {
+class DeleteSectorDialogFragment : DialogFragment() {
 
     private lateinit var editTextNameOfSector: EditText
     private lateinit var confirmButton: TextView
     private lateinit var cancelButton: TextView
+	
+	private lateinit var sector: SectorData
 
-    private var createSectorJob: Job? = null
-    private var newItemListener: NewItemListener? = null
+    private var deleteSectorJob: Job? = null
+    private var deletedItemListener: DeleteItemListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_new_sector, container, false)
+        return inflater.inflate(R.layout.dialog_delete_sector, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         editTextNameOfSector = view.findViewById(R.id.textInputEditText_name_of_sector)
-        confirmButton = view.findViewById(R.id.button_confirm_new_sector)
-        cancelButton = view.findViewById(R.id.button_cancel_new_sector)
+        confirmButton = view.findViewById(R.id.button_confirm_delete_sector)
+        cancelButton = view.findViewById(R.id.button_cancel_delete_sector)
+		
+		editTextNameOfSector.filters += InputFilter.AllCaps()
 
         confirmButton.setOnClickListener {
-            val sectorName = editTextNameOfSector.text.toString().trim()
-            if (sectorName.isEmpty()) {
-				showMessage("Por favor diga o nome do setor")
-            } else if (sectorName.length > 15) {
-				showMessage("Esse nome é muito grande!")
+			if (editTextNameOfSector.text.toString() == sector.name){
+				deleteSector()
+			} else {
+				showMessage("Esse nome não está correto!")
 			}
-			
-			createNewSector(sectorName)
         }
 
         cancelButton.setOnClickListener {
             dismiss()
         }
     }
+	
+	fun setSectorData(sectorData: SectorData) {
+		sector = sectorData
+    }
 
-    private fun createNewSector(sectorName: String) {
-        createSectorJob?.cancel() // Cancela a operação anterior, se houver
+    private fun deleteSector() {
+        deleteSectorJob?.cancel()
 
-        createSectorJob = GlobalScope.launch(Dispatchers.Main) {
+        deleteSectorJob = GlobalScope.launch(Dispatchers.Main) {
             try {
-                val success = SectorAPI().createSector(SectorData(name = sectorName, products = listOf()))
+                val success = SectorAPI().deleteSector(sector._id)
                 if (success) {
-					newItemListener?.onNewItemAdded()
+					deletedItemListener?.onDeletedItem()
                     dismiss()
                 } else {
-                    Toast.makeText(requireContext(), "Falha ao tentar criar o setor", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Falha ao tentar deletar o setor", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
 				if (isActive) {
-                    Toast.makeText(requireContext(), "Error creating new sector", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Falha ao tentar deletar o setor", Toast.LENGTH_SHORT).show()
                     e.printStackTrace()
                 }
             }
@@ -91,19 +97,19 @@ class NewSectorDialogFragment : DialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        createSectorJob?.cancel()
+        deleteSectorJob?.cancel()
     }
 
-    fun setNewItemListener(listener: NewItemListener) {
-        newItemListener = listener
+    fun setDeleteItemListener(listener: DeleteItemListener) {
+		deletedItemListener = listener
     }
 	
 	companion object {
-		const val TAG = "NewSectorDialogFragment"
+		const val TAG = "DeleteSectorDialogFragment"
 	}
 	
-	interface NewItemListener {
-		fun onNewItemAdded()
+	interface DeleteItemListener {
+		fun onDeletedItem()
 	}
 	
 	private fun showMessage(message: String) {

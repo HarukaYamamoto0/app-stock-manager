@@ -31,7 +31,7 @@ class ProductAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            productLongClickListener?.onProductLongClick(productData)
+            productLongClickListener?.onProductLongClick(productData, holder.itemView)
             true
         }
     }
@@ -48,6 +48,6 @@ class ProductAdapter(
     }
 
     interface OnProductLongClickListener {
-        fun onProductLongClick(product: ProductData)
+        fun onProductLongClick(product: ProductData, productView: View)
     }
 }

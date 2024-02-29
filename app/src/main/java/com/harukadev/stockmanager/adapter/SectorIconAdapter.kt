@@ -31,7 +31,7 @@ class SectorIconAdapter(
         }
 
         holder.itemView.setOnLongClickListener {
-            sectorLongClickListener?.onSectorLongClick(sectorData)
+            sectorLongClickListener?.onSectorLongClick(sectorData, holder.itemView)
             true
         }
     }
@@ -48,6 +48,6 @@ class SectorIconAdapter(
     }
 
     interface OnSectorLongClickListener {
-        fun onSectorLongClick(sector: SectorData)
+        fun onSectorLongClick(sector: SectorData, sectorView: View)
     }
 }

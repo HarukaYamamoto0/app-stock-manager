@@ -8,7 +8,7 @@
     android:padding="15dp" >
 
     <TextView
-        android:id="@+id/title_new_sector"
+        android:id="@+id/title_new_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -18,7 +18,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/subtitle_new_sector"
+        android:id="@+id/subtitle_new_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"

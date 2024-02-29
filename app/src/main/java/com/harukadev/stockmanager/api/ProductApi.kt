@@ -6,8 +6,11 @@ import com.google.gson.reflect.TypeToken
 import com.harukadev.stockmanager.data.ProductData
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
+import java.io.IOException
 
 class ProductAPI {
 
@@ -17,21 +20,21 @@ class ProductAPI {
     private val gson = Gson()
 
     suspend fun getAllProductsBySectorId(sectorId: String): List<ProductData> {
-      return try {
-        val response = client.get<String>("$apiUrl/$sectorId")
-        parseProducts(response)
-    } catch (e: Exception) {
-        Log.e(TAG, "Error getting all products by sector id: ${e.message}")
-        emptyList()
+        return try {
+            val response = client.get<String>("$apiUrl/sector/$sectorId")
+            parseProducts(response)
+        } catch (e: Exception) {
+            handleException("Error getting all products by sector id", e)
+            emptyList()
+        }
     }
-}
 
     suspend fun getProductById(id: String): ProductData? {
         return try {
             val response = client.get<String>("$apiUrl/$id")
             parseProduct(response)
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting product by id: ${e.message}")
+            handleException("Error getting product by id", e)
             null
         }
     }
@@ -39,14 +42,13 @@ class ProductAPI {
     suspend fun createProduct(product: ProductData): Boolean {
         return try {
             val productJson = gson.toJson(product)
-            Log.e(TAG, productJson)
             client.post<Unit>(apiUrl) {
                 contentType(ContentType.Application.Json)
                 body = productJson
             }
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Error creating product: ${e.message}")
+            handleException("Error creating product", e)
             false
         }
     }
@@ -60,7 +62,7 @@ class ProductAPI {
             }
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating product: ${e.message}")
+            handleException("Error updating product", e)
             false
         }
     }
@@ -70,7 +72,7 @@ class ProductAPI {
             client.delete<Unit>("$apiUrl/$id")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Error deleting product: ${e.message}")
+            handleException("Error deleting product", e)
             false
         }
     }
@@ -82,5 +84,13 @@ class ProductAPI {
 
     private fun parseProduct(response: String): ProductData? {
         return gson.fromJson(response, ProductData::class.java)
+    }
+
+    private fun handleException(message: String, e: Exception) {
+        Log.e(TAG, "$message: ${e.message}")
+    }
+
+    fun closeClient() {
+        client.close()
     }
 }

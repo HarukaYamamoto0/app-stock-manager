@@ -13,6 +13,7 @@
 
     <!-- App Colors -->
     <color name="background">#06090B</color>
+    <color name="background_inverse">#06090B</color>
     <color name="text_color">#DCDDE0</color>
     <color name="text_color_inverse">#DCDDE0</color>
     <color name="primary">#6B4BF0</color>
@@ -22,5 +23,10 @@
     <color name="text_color_dark">#8F8E8E</color>
     <color name="ripplerPrimary">#250b8e</color>
     <color name="ripplerGray">#80808080</color>
+
+    <!-- Snackbars -->
+    <color name="snackbar_background">@color/background_inverse</color>
+    <color name="snackbar_action_text_color">@color/text_color_inverse</color>
+    <color name="snackbar_text_color">@color/text_color</color>
 
 </resources>

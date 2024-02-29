@@ -3,17 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="5dp"
+    android:layout_margin="5dp"
     android:background="@drawable/bg_product_item"
     android:weightSum="5"
-    tools:showIn="@layout/activity_sector">
+    tools:showIn="@layout/activity_sector" >
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:paddingStart="20dp" >
 
         <TextView
             android:id="@+id/textView_name_of_product"
@@ -44,7 +45,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center">
+        android:gravity="center" >
 
         <TextView
             android:id="@+id/textView_amount_of_product"

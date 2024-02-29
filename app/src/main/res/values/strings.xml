@@ -23,7 +23,8 @@
     <string name="cancel">Cancelar</string>
     <string name="read_barcode">Ler código de barras</string>
     <string name="invalid_date_format">O formato da data é 01/06/2002</string>
-    <string name="no_data">Nenhum dado encontrado...</string>
+    <string name="sectors_not_found">Nenhum setor foi encontrado 🤔</string>
+    <string name="products_not_found">Nenhum produto foi encontrado 🤔</string>
 
     <!-- Errors -->
     <string name="error_io">Erro de comunicação. Verifique sua conexão com a internet e tente novamente.</string>

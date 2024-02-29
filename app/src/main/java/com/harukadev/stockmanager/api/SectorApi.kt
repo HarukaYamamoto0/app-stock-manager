@@ -13,7 +13,7 @@ import org.json.JSONArray
 
 class SectorAPI {
 
-    private val apiUrl = "https://app-stock-manager-production.up.railway.app/api/sectors/"
+    private val apiUrl = "https://app-stock-manager-production.up.railway.app/api/sectors"
     private val TAG = "SectorAPI"
     private val client = HttpClient(Android)
     private val gson = Gson()
@@ -56,7 +56,7 @@ class SectorAPI {
     suspend fun updateSector(sector: SectorData): Boolean {
         return try {
             val sectorJson = gson.toJson(sector)
-            client.put<Unit>("$apiUrl/${sector.id}") {
+            client.put<Unit>("$apiUrl/${sector._id}") {
                 contentType(ContentType.Application.Json)
                 body = sectorJson
             }
