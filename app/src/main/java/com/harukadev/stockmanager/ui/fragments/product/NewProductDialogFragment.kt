@@ -1,9 +1,12 @@
 package com.harukadev.stockmanager.ui.fragments.product
 
+import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +19,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.harukadev.stockmanager.R
 import com.harukadev.stockmanager.api.ProductAPI
 import com.harukadev.stockmanager.data.ProductData
-import com.harukadev.stockmanager.data.SectorData
+import com.harukadev.stockmanager.ui.activities.BarcodeScannerActivity
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-import android.text.InputFilter
 
+@Suppress("DEPRECATION")
 class NewProductDialogFragment : DialogFragment(), CoroutineScope {
 
     private lateinit var productNameEditText: TextInputEditText
@@ -52,8 +55,8 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
         amountEditText = view.findViewById(R.id.edittext_amount)
         confirmButton = view.findViewById(R.id.button_confirm_new_product)
         cancelButton = view.findViewById(R.id.button_cancel_new_product)
-		
-		productNameEditText.filters += InputFilter.AllCaps()
+
+        productNameEditText.filters += InputFilter.AllCaps()
 
         confirmButton.setOnClickListener {
             val name = productNameEditText.text.toString()
@@ -76,10 +79,15 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
         cancelButton.setOnClickListener {
             dismiss()
         }
+
+        barcodeEditText.setOnClickListener {
+            val intent = Intent(requireContext(), BarcodeScannerActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE_BARCODE_SCANNER)
+        }
     }
-	
-	fun setProductData(sectorIdInput: String) {
-		sectorId = sectorIdInput
+
+    fun setProductData(sectorIdInput: String) {
+        sectorId = sectorIdInput
     }
 
     private fun createNewProduct(name: String, barcode: String, amount: Int) {
@@ -99,6 +107,15 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
                 Toast.makeText(requireContext(), "Falha ao tentar criar o produto", Toast.LENGTH_SHORT).show()
                 e.printStackTrace()
             }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_BARCODE_SCANNER && resultCode == Activity.RESULT_OK) {
+            val barcodeValue = data?.getStringExtra(BarcodeScannerActivity.EXTRA_BARCODE_VALUE)
+            barcodeEditText.setText(barcodeValue)
         }
     }
 
@@ -122,6 +139,7 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
 
     companion object {
         const val TAG = "NewProductDialogFragment"
+        private const val REQUEST_CODE_BARCODE_SCANNER = 1001
     }
 
     interface NewProductListener {

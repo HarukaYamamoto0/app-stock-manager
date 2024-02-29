@@ -1,30 +1,34 @@
-package com.harukadev.stockmanager.ui.fragments.sector
+package com.harukadev.stockmanager.ui.fragments.product
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.harukadev.stockmanager.R
-import com.harukadev.stockmanager.api.SectorAPI
-import com.harukadev.stockmanager.data.SectorData
 import kotlinx.coroutines.*
 import android.text.InputFilter
+import com.google.android.material.textfield.TextInputEditText
+import com.harukadev.stockmanager.api.ProductAPI
+import com.harukadev.stockmanager.data.ProductData
+import com.harukadev.stockmanager.ui.activities.BarcodeScannerActivity
 
 class EditProductDialogFragment : DialogFragment() {
 
     private lateinit var productNameEditText: TextInputEditText
     private lateinit var barcodeEditText: TextInputEditText
+    private lateinit var readBarcodeButton: TextView
     private lateinit var amountEditText: TextInputEditText
     private lateinit var confirmButton: TextView
     private lateinit var cancelButton: TextView
 
-    private lateinit var produc: ProductData
+    private lateinit var product: ProductData
 
-    private var editSectorJob: Job? = null
+    private var editProductJob: Job? = null
     private var editItemListener: EditItemListener? = null
 
     override fun onCreateView(
@@ -32,7 +36,7 @@ class EditProductDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_edit_sector, container, false)
+        return inflater.inflate(R.layout.dialog_edit_product, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -41,17 +45,16 @@ class EditProductDialogFragment : DialogFragment() {
         productNameEditText = view.findViewById(R.id.edittext_product_name)
         barcodeEditText = view.findViewById(R.id.edittext_barcode)
         amountEditText = view.findViewById(R.id.edittext_amount)
-        confirmButton = view.findViewById(R.id.button_confirm_edit_sector)
-        cancelButton = view.findViewById(R.id.button_cancel_edit_sector)
-		
-		productNameEditText.filters += InputFilter.AllCaps()
+        confirmButton = view.findViewById(R.id.button_confirm_edit_product)
+        cancelButton = view.findViewById(R.id.button_cancel_edit_product)
+        readBarcodeButton = view.findViewById(R.id.read_barcode_text)
+
+        productNameEditText.filters += InputFilter.AllCaps()
 
         confirmButton.setOnClickListener {
             val name = productNameEditText.text.toString()
             val barcode = barcodeEditText.text.toString().trim()
             val amount = amountEditText.text.toString().toIntOrNull()
-			
-			if 
 
             if (name.length > 50) {
                 showMessage("Esse nome é muito grande!")
@@ -62,8 +65,14 @@ class EditProductDialogFragment : DialogFragment() {
             } else if (amount == null) {
                 showMessage("A quantidade não é válida!")
             } else {
-                createNewProduct(name, barcode, amount)
+                editProduct(name, barcode, amount)
             }
+        }
+
+        readBarcodeButton.setOnClickListener {
+            val intent = Intent(requireContext(), BarcodeScannerActivity::class.java)
+            @Suppress("DEPRECATION")
+            startActivityForResult(intent, REQUEST_CODE_BARCODE_SCANNER)
         }
 
         cancelButton.setOnClickListener {
@@ -71,11 +80,12 @@ class EditProductDialogFragment : DialogFragment() {
         }
     }
 
-    fun setProductData(sectorData: SectorData) {
-        sector = sectorData
+    fun setProductData(productData: ProductData) {
+        product = productData
     }
 
-    private fun editSector(editName: String?, editBarcode: String?, editAmount: Int?) {
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun editProduct(editName: String?, editBarcode: String?, editAmount: Int?) {
         editProductJob?.cancel()
 
         editProductJob = GlobalScope.launch(Dispatchers.Main) {
@@ -86,7 +96,7 @@ class EditProductDialogFragment : DialogFragment() {
                         name = editName ?: product.name,
                         barcode = editBarcode ?: product.barcode,
                         quantity = editAmount ?: product.quantity,
-						sector = product.sector
+                        sector = product.sector
                     )
                 )
                 if (success) {
@@ -103,9 +113,9 @@ class EditProductDialogFragment : DialogFragment() {
             }
         }
     }
-	
-	fun setEditItemListener(listener: EditItemListener) {
-		editItemListener = listener
+
+    fun setEditItemListener(listener: EditItemListener) {
+        editItemListener = listener
     }
 
     override fun onDestroy() {
@@ -118,10 +128,26 @@ class EditProductDialogFragment : DialogFragment() {
     }
 
     companion object {
-        const val TAG = "EditProductDialogFragment"
+        const val TAG = "NewProductDialogFragment"
+        private const val REQUEST_CODE_BARCODE_SCANNER = 1001
     }
 
     private fun showMessage(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        @Suppress("DEPRECATION")
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_BARCODE_SCANNER && resultCode == Activity.RESULT_OK) {
+            val barcodeValue = data?.getStringExtra(BarcodeScannerActivity.EXTRA_BARCODE_VALUE)
+            barcodeEditText.setText(barcodeValue)
+        }
+    }
+
+    private fun isBarcodeValid(barcode: String): Boolean {
+        val barcodePattern = Regex("^[0-9]{12,13}\$")
+        return barcode.matches(barcodePattern)
     }
 }

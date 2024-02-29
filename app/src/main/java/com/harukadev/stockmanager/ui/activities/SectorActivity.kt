@@ -18,7 +18,9 @@ import com.harukadev.stockmanager.api.SectorAPI
 import com.harukadev.stockmanager.data.ProductData
 import com.harukadev.stockmanager.data.SectorData
 import com.harukadev.stockmanager.ui.fragments.product.DeleteProductDialogFragment
+import com.harukadev.stockmanager.ui.fragments.product.EditProductDialogFragment
 import com.harukadev.stockmanager.ui.fragments.product.NewProductDialogFragment
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,7 +28,8 @@ import kotlinx.coroutines.launch
 class SectorActivity :
     AppCompatActivity(),
     NewProductDialogFragment.NewProductListener,
-    DeleteProductDialogFragment.DeleteProductListener {
+    DeleteProductDialogFragment.DeleteProductListener,
+    EditProductDialogFragment.EditItemListener {
 
     companion object {
         const val DATA_SECTOR = "data_sector"
@@ -68,6 +71,8 @@ class SectorActivity :
         fab = findViewById(R.id.fab_new_product)
     }
 
+    @Suppress("DEPRECATION")
+    @OptIn(DelicateCoroutinesApi::class)
     private fun startLoading() {
         GlobalScope.launch(Dispatchers.Main) {
             try {
@@ -76,7 +81,7 @@ class SectorActivity :
                 val sectorResponse = sectorApi.getSectorById(sectorId)
                 sectorResponse?.let {
                     displaySectorData(it)
-					setupRecyclerView()
+                    setupRecyclerView()
                     loadProducts()
                     setupSearchBar()
                     setFabClickListener()
@@ -138,20 +143,20 @@ class SectorActivity :
                     val popup = PopupMenu(this@SectorActivity, productView)
                     popup.inflate(R.menu.product_options)
                     popup.setOnMenuItemClickListener { menuItem ->
-						val itemId = menuItem.itemId
-						
-						if (itemId == R.id.menu_edit_product) {
-							val dialog = EditProductDialogFragment()
-							dialog.setProductData(product)
-							dialog.setEditItemListener(this@SectorActivity)
-							dialog.show(supportFragmentManager, EditProductDialogFragment.TAG)
-						} else if (itemId == R.id.menu_delete_product) {
-							val dialog = DeleteProductDialogFragment()
-							dialog.setProductData(product)
-							dialog.setDeleteProductListener(this@SectorActivity)
-							dialog.show(supportFragmentManager, DeleteProductDialogFragment.TAG)
-						}
-						
+                        val itemId = menuItem.itemId
+
+                        if (itemId == R.id.menu_edit_product) {
+                            val dialog = EditProductDialogFragment()
+                            dialog.setProductData(product)
+                            dialog.setEditItemListener(this@SectorActivity)
+                            dialog.show(supportFragmentManager, EditProductDialogFragment.TAG)
+                        } else if (itemId == R.id.menu_delete_product) {
+                            val dialog = DeleteProductDialogFragment()
+                            dialog.setProductData(product)
+                            dialog.setDeleteProductListener(this@SectorActivity)
+                            dialog.show(supportFragmentManager, DeleteProductDialogFragment.TAG)
+                        }
+
                         true
                     }
                     popup.show()
@@ -188,6 +193,10 @@ class SectorActivity :
     }
 
     override fun onDeletedProduct() {
+        startLoading()
+    }
+
+    override fun onEditedItem() {
         startLoading()
     }
 

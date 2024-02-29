@@ -1,22 +1,22 @@
 package com.harukadev.stockmanager.ui.activities
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.camera.view.PreviewView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.harukadev.stockmanager.lib.analyzer.BarcodeAnalyzer
 import com.harukadev.stockmanager.R
-import java.lang.IllegalArgumentException
+import com.harukadev.stockmanager.lib.BarcodeAnalyzer
+import com.harukadev.stockmanager.ui.custom.BarcodeBoxView
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -33,7 +33,13 @@ class BarcodeScannerActivity : AppCompatActivity() {
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         barcodeBoxView = BarcodeBoxView(this)
-        addContentView(barcodeBoxView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+        addContentView(
+            barcodeBoxView,
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
 
         previewView = findViewById(R.id.preview_view)
 
@@ -46,9 +52,6 @@ class BarcodeScannerActivity : AppCompatActivity() {
         cameraExecutor.shutdown()
     }
 
-    /**
-     * This function is executed once the user has granted or denied the missing permission
-     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -58,34 +61,31 @@ class BarcodeScannerActivity : AppCompatActivity() {
         checkIfCameraPermissionIsGranted()
     }
 
-    /**
-     * This function is responsible to request the required CAMERA permission
-     */
     private fun checkCameraPermission() {
         try {
             val requiredPermissions = arrayOf(Manifest.permission.CAMERA)
-             ActivityCompat.requestPermissions(this, requiredPermissions, 0)
+            ActivityCompat.requestPermissions(
+                this,
+                requiredPermissions,
+                CAMERA_PERMISSION_REQUEST_CODE
+            )
         } catch (e: IllegalArgumentException) {
             checkIfCameraPermissionIsGranted()
         }
     }
 
-    /**
-     * This function will check if the CAMERA permission has been granted.
-     * If so, it will call the function responsible to initialize the camera preview.
-     * Otherwise, it will raise an alert.
-     */
     private fun checkIfCameraPermissionIsGranted() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            // Permission granted: start the preview
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             startCamera()
         } else {
-            // Permission denied
             MaterialAlertDialogBuilder(this)
                 .setTitle("Permission required")
                 .setMessage("This application needs to access the camera to process barcodes")
                 .setPositiveButton("Ok") { _, _ ->
-                    // Keep asking for permission until granted
                     checkCameraPermission()
                 }
                 .setCancelable(false)
@@ -97,23 +97,18 @@ class BarcodeScannerActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * This function is responsible for the setup of the camera preview and the image analyzer.
-     */
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
 
-            // Preview
             val preview = Preview.Builder()
                 .build()
                 .also {
                     it.setSurfaceProvider(previewView.surfaceProvider)
                 }
 
-            // Image analyzer
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
@@ -124,26 +119,28 @@ class BarcodeScannerActivity : AppCompatActivity() {
                             this,
                             barcodeBoxView,
                             previewView.width.toFloat(),
-                            previewView.height.toFloat()
+                            previewView.height.toFloat(),
+                            this@BarcodeScannerActivity
                         )
                     )
                 }
 
-            // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
-                // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
-
-                // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageAnalyzer
                 )
-
             } catch (exc: Exception) {
                 exc.printStackTrace()
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 100
+        const val RESULT_OK = Activity.RESULT_OK
+        const val EXTRA_BARCODE_VALUE = "extra_barcode_value"
     }
 }

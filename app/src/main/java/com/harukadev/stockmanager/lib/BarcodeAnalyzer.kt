@@ -1,24 +1,25 @@
-package com.harukadev.stockmanager.utils
+package com.harukadev.stockmanager.lib
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.graphics.RectF
 import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.google.android.material.snackbar.Snackbar
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import com.harukadev.stockmanager.ui.activities.BarcodeScannerActivity
 import com.harukadev.stockmanager.ui.custom.BarcodeBoxView
 
 class BarcodeAnalyzer(
     private val context: Context,
     private val barcodeBoxView: BarcodeBoxView,
     private val previewViewWidth: Float,
-    private val previewViewHeight: Float
+    private val previewViewHeight: Float,
+    private val activity: BarcodeScannerActivity
 ) : ImageAnalysis.Analyzer {
 
     /**
@@ -57,13 +58,6 @@ class BarcodeAnalyzer(
                 .addOnSuccessListener { barcodes ->
                     if (barcodes.isNotEmpty()) {
                         for (barcode in barcodes) {
-                            // Handle received barcodes...
-                            Toast.makeText(
-                                context,
-                                "Value: " + barcode.rawValue,
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
                             // Update bounding rect
                             barcode.boundingBox?.let { rect ->
                                 barcodeBoxView.setRect(
@@ -72,6 +66,18 @@ class BarcodeAnalyzer(
                                     )
                                 )
                             }
+
+                            // Set the result back to the calling activity
+                            activity.setResult(
+                                BarcodeScannerActivity.RESULT_OK,
+                                Intent().apply {
+                                    putExtra(
+                                        BarcodeScannerActivity.EXTRA_BARCODE_VALUE,
+                                        barcode.rawValue
+                                    )
+                                }
+                            )
+                            activity.finish()
                         }
                     } else {
                         // Remove bounding rect

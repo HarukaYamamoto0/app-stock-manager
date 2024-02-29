@@ -89,7 +89,7 @@ class MainActivity :
             .load(avatarUrl)
             .into(userAvatarImageView)
 
-        usernameTextView.text = sharedPreferencesManager.getString("name", "SEM NOME")
+        usernameTextView.text = sharedPreferencesManager.getString("name", "Sem Nome")
 
         val cpf = sharedPreferencesManager.getString("cpf", "Sem CPF")
         cpfTextView.text = CPFMask.formatCPF(cpf)

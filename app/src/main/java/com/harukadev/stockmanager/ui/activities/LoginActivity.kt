@@ -1,6 +1,5 @@
 package com.harukadev.stockmanager.ui.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +12,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.harukadev.stockmanager.R
 import com.harukadev.stockmanager.api.UserAPI
 import com.harukadev.stockmanager.data.UserData
-import com.harukadev.stockmanager.utils.CPFValidator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -22,6 +20,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import android.view.View
 import com.harukadev.stockmanager.utils.DateTextWatcher
 import com.harukadev.stockmanager.utils.SharedPreferencesManager
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 class LoginActivity : AppCompatActivity() {
 
@@ -52,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
             spinner.visibility = View.VISIBLE
             
             val cpf = editTextCPF.text.toString()
-            val cleanedCPF = cpf.replace(Regex("[^\\d]"), "")
+            val cleanedCPF = cpf.replace(Regex("\\D"), "")
             val birthDate = editTextBirthDate.text.toString()
 
             if (cleanedCPF.isEmpty() || birthDate.isEmpty()) {
@@ -74,6 +73,7 @@ class LoginActivity : AppCompatActivity() {
         spinner = findViewById(R.id.spinner_login)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun isValidCredentials(cpf: String, birthDate: String) {
         GlobalScope.launch(Dispatchers.Main) {
             try {
