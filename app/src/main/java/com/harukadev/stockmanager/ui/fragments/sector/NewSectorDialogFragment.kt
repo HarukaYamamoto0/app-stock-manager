@@ -1,6 +1,5 @@
 package com.harukadev.stockmanager.ui.fragments.sector
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -37,24 +36,26 @@ class NewSectorDialogFragment : DialogFragment() {
         return inflater.inflate(R.layout.dialog_new_sector, container, false)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         editTextNameOfSector = view.findViewById(R.id.textInputEditText_name_of_sector)
         confirmButton = view.findViewById(R.id.button_confirm_new_sector)
         cancelButton = view.findViewById(R.id.button_cancel_new_sector)
-		
-		editTextNameOfSector.filters += InputFilter.AllCaps()
+
+        editTextNameOfSector.filters += InputFilter.AllCaps()
 
         confirmButton.setOnClickListener {
             val sectorName = editTextNameOfSector.text.toString().trim()
             if (sectorName.isEmpty()) {
-				showMessage("Por favor diga o nome do setor")
+                showMessage("Por favor diga o nome do setor")
             } else if (sectorName.length > 15) {
-				showMessage("Esse nome é muito grande!")
-			}
-			
-			createNewSector(sectorName)
+                showMessage("Esse nome é muito grande!")
+            }
+            createNewSector(sectorName)
         }
 
         cancelButton.setOnClickListener {
@@ -62,21 +63,35 @@ class NewSectorDialogFragment : DialogFragment() {
         }
     }
 
+    @DelicateCoroutinesApi
     private fun createNewSector(sectorName: String) {
         createSectorJob?.cancel() // Cancela a operação anterior, se houver
 
         createSectorJob = GlobalScope.launch(Dispatchers.Main) {
             try {
-                val success = SectorAPI().createSector(SectorData(name = sectorName.lowercase(), products = listOf()))
+                val success = SectorAPI().createSector(
+                    SectorData(
+                        name = sectorName.lowercase(),
+                        products = listOf()
+                    )
+                )
                 if (success) {
-					newItemListener?.onNewItemAdded()
+                    newItemListener?.onNewItemAdded()
                     dismiss()
                 } else {
-                    Toast.makeText(requireContext(), "Falha ao tentar criar o setor", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Falha ao tentar criar o setor",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } catch (e: Exception) {
-				if (isActive) {
-                    Toast.makeText(requireContext(), "Error creating new sector", Toast.LENGTH_SHORT).show()
+                if (isActive) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error creating new sector",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     e.printStackTrace()
                 }
             }
@@ -100,16 +115,16 @@ class NewSectorDialogFragment : DialogFragment() {
     fun setNewItemListener(listener: NewItemListener) {
         newItemListener = listener
     }
-	
-	companion object {
-		const val TAG = "NewSectorDialogFragment"
-	}
-	
-	interface NewItemListener {
-		fun onNewItemAdded()
-	}
-	
-	private fun showMessage(message: String) {
-		Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-	}
+
+    companion object {
+        const val TAG = "NewSectorDialogFragment"
+    }
+
+    interface NewItemListener {
+        fun onNewItemAdded()
+    }
+
+    private fun showMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
 }

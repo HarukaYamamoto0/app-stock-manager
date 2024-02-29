@@ -2,20 +2,24 @@ package com.harukadev.stockmanager.ui.fragments.product
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import com.harukadev.stockmanager.R
-import kotlinx.coroutines.*
-import android.text.InputFilter
 import com.google.android.material.textfield.TextInputEditText
+import com.harukadev.stockmanager.R
 import com.harukadev.stockmanager.api.ProductAPI
 import com.harukadev.stockmanager.data.ProductData
 import com.harukadev.stockmanager.ui.activities.BarcodeScannerActivity
+import kotlinx.coroutines.*
+
 
 class EditProductDialogFragment : DialogFragment() {
 
@@ -42,12 +46,16 @@ class EditProductDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         productNameEditText = view.findViewById(R.id.edittext_product_name)
         barcodeEditText = view.findViewById(R.id.edittext_barcode)
         amountEditText = view.findViewById(R.id.edittext_amount)
         confirmButton = view.findViewById(R.id.button_confirm_edit_product)
         cancelButton = view.findViewById(R.id.button_cancel_edit_product)
         readBarcodeButton = view.findViewById(R.id.read_barcode_text)
+
+        readBarcodeButton.paintFlags = readBarcodeButton.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         productNameEditText.filters += InputFilter.AllCaps()
 

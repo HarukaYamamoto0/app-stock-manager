@@ -1,5 +1,7 @@
 package com.harukadev.stockmanager.ui.fragments.sector
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,11 +38,13 @@ class EditSectorDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         editTextNameOfSector = view.findViewById(R.id.textInputEditText_name_of_sector)
         confirmButton = view.findViewById(R.id.button_confirm_edit_sector)
         cancelButton = view.findViewById(R.id.button_cancel_edit_sector)
-		
-		editTextNameOfSector.filters += InputFilter.AllCaps()
+
+        editTextNameOfSector.filters += InputFilter.AllCaps()
 
         confirmButton.setOnClickListener {
             val sectorName = editTextNameOfSector.text.toString().trim()
@@ -49,7 +53,7 @@ class EditSectorDialogFragment : DialogFragment() {
             } else if (sectorName.length > 15) {
                 showMessage("O nome do setor é muito longo!")
             } else {
-                editSector(sectorName, null)
+                editSector(sectorName)
             }
         }
 
@@ -62,7 +66,8 @@ class EditSectorDialogFragment : DialogFragment() {
         sector = sectorData
     }
 
-    private fun editSector(sectorName: String?, icon: String?) {
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun editSector(sectorName: String?) {
         editSectorJob?.cancel()
 
         editSectorJob = GlobalScope.launch(Dispatchers.Main) {
@@ -71,7 +76,7 @@ class EditSectorDialogFragment : DialogFragment() {
                     SectorData(
                         _id = sector._id,
                         name = sectorName ?: sector.name,
-                        icon = icon ?: sector.icon,
+                        icon = sector.icon,
                         products = sector.products
                     )
                 )
@@ -89,9 +94,9 @@ class EditSectorDialogFragment : DialogFragment() {
             }
         }
     }
-	
-	fun setEditItemListener(listener: EditItemListener) {
-		editItemListener = listener
+
+    fun setEditItemListener(listener: EditItemListener) {
+        editItemListener = listener
     }
 
     override fun onDestroy() {
