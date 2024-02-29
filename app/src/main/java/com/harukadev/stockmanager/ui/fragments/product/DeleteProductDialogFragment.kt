@@ -22,11 +22,9 @@ import kotlin.coroutines.CoroutineContext
 
 class DeleteProductDialogFragment : DialogFragment(), CoroutineScope {
 
-    private lateinit var productNameEditText: TextInputEditText
     private lateinit var confirmButton: TextView
     private lateinit var cancelButton: TextView
-    private var sectorId: String? = null
-	private lateinit var product: ProductData
+    private lateinit var product: ProductData
     private var deleteProductJob: Job? = null
     private var deleteProductListener: DeleteProductListener? = null
 
@@ -44,20 +42,22 @@ class DeleteProductDialogFragment : DialogFragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         confirmButton = view.findViewById(R.id.button_confirm_delete_product)
         cancelButton = view.findViewById(R.id.button_cancel_delete_product)
-		
-		confirmButton.setOnClickListener {
-			deleteProduct()
+
+        confirmButton.setOnClickListener {
+            deleteProduct()
         }
 
         cancelButton.setOnClickListener {
             dismiss()
         }
     }
-	
-	fun setProductData(productData: ProductData) {
-		product = productData
+
+    fun setProductData(productData: ProductData) {
+        product = productData
     }
 
     private fun deleteProduct() {
@@ -70,10 +70,18 @@ class DeleteProductDialogFragment : DialogFragment(), CoroutineScope {
                     deleteProductListener?.onDeletedProduct()
                     dismiss()
                 } else {
-                    Toast.makeText(requireContext(), "Falha ao tentar apagar o produto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Falha ao tentar apagar o produto",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Falha ao tentar apagar o produto", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Falha ao tentar apagar o produto",
+                    Toast.LENGTH_SHORT
+                ).show()
                 e.printStackTrace()
             }
         }

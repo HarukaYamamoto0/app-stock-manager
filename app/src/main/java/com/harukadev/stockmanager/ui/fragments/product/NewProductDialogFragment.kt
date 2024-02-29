@@ -50,6 +50,8 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         productNameEditText = view.findViewById(R.id.edittext_product_name)
         barcodeEditText = view.findViewById(R.id.edittext_barcode)
         amountEditText = view.findViewById(R.id.edittext_amount)
@@ -96,15 +98,30 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
         createProductJob = launch {
             try {
                 val success =
-                    ProductAPI().createProduct(ProductData(name = name, barcode = barcode, quantity = amount, sector = sectorId))
+                    ProductAPI().createProduct(
+                        ProductData(
+                            name = name,
+                            barcode = barcode,
+                            quantity = amount,
+                            sector = sectorId
+                        )
+                    )
                 if (success) {
                     newProductListener?.onNewProductAdded()
                     dismiss()
                 } else {
-                    Toast.makeText(requireContext(), "Falha ao tentar criar o produto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Falha ao tentar criar o produto",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Falha ao tentar criar o produto", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Falha ao tentar criar o produto",
+                    Toast.LENGTH_SHORT
+                ).show()
                 e.printStackTrace()
             }
         }
