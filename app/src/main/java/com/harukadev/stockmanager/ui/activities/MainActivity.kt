@@ -18,7 +18,7 @@ import com.harukadev.stockmanager.data.SectorData
 import com.harukadev.stockmanager.ui.fragments.sector.NewSectorDialogFragment
 import com.harukadev.stockmanager.ui.fragments.sector.EditSectorDialogFragment
 import com.harukadev.stockmanager.ui.fragments.sector.DeleteSectorDialogFragment
-import com.harukadev.stockmanager.utils.CPFMask
+import com.harukadev.stockmanager.utils.maskCPF
 import com.harukadev.stockmanager.utils.SharedPreferencesManager
 import kotlinx.coroutines.*
 
@@ -26,7 +26,7 @@ class MainActivity :
     AppCompatActivity(),
     NewSectorDialogFragment.NewItemListener,
     EditSectorDialogFragment.EditItemListener,
-	DeleteSectorDialogFragment.DeleteItemListener {
+    DeleteSectorDialogFragment.DeleteItemListener {
 
     private lateinit var editTextSearchSector: EditText
     private lateinit var btnSeeMore: TextView
@@ -84,7 +84,8 @@ class MainActivity :
     }
 
     private fun loadUserData() {
-        val avatarUrl = sharedPreferencesManager.getString("avatarURL", "https://imgur.com/WRQ2Kbj.png")
+        val avatarUrl =
+            sharedPreferencesManager.getString("avatarURL", "https://imgur.com/WRQ2Kbj.png")
         Glide.with(this@MainActivity)
             .load(avatarUrl)
             .into(userAvatarImageView)
@@ -92,7 +93,7 @@ class MainActivity :
         usernameTextView.text = sharedPreferencesManager.getString("name", "Sem Nome")
 
         val cpf = sharedPreferencesManager.getString("cpf", "Sem CPF")
-        cpfTextView.text = CPFMask.formatCPF(cpf)
+        cpfTextView.text = maskCPF(cpf)
     }
 
     private suspend fun loadSectors() {
@@ -128,20 +129,20 @@ class MainActivity :
                     val popup = PopupMenu(this@MainActivity, sectorView)
                     popup.inflate(R.menu.sector_options)
                     popup.setOnMenuItemClickListener { menuItem ->
-						val itemId = menuItem.itemId
-						
-						if (itemId == R.id.menu_edit_sector) {
-							val dialog = EditSectorDialogFragment()
-							dialog.setSectorData(sector)
-							dialog.setEditItemListener(this@MainActivity)
-							dialog.show(supportFragmentManager, EditSectorDialogFragment.TAG)
-						} else if (itemId == R.id.menu_delete_sector) {
-							val dialog = DeleteSectorDialogFragment()
-							dialog.setSectorData(sector)
-							dialog.setDeleteItemListener(this@MainActivity)
-							dialog.show(supportFragmentManager, DeleteSectorDialogFragment.TAG)
-						}
-						
+                        val itemId = menuItem.itemId
+
+                        if (itemId == R.id.menu_edit_sector) {
+                            val dialog = EditSectorDialogFragment()
+                            dialog.setSectorData(sector)
+                            dialog.setEditItemListener(this@MainActivity)
+                            dialog.show(supportFragmentManager, EditSectorDialogFragment.TAG)
+                        } else if (itemId == R.id.menu_delete_sector) {
+                            val dialog = DeleteSectorDialogFragment()
+                            dialog.setSectorData(sector)
+                            dialog.setDeleteItemListener(this@MainActivity)
+                            dialog.show(supportFragmentManager, DeleteSectorDialogFragment.TAG)
+                        }
+
                         true
                     }
                     popup.show()
@@ -184,7 +185,8 @@ class MainActivity :
     }
 
     private fun updateSeeMoreButtonVisibility() {
-        btnSeeMore.text = if (productsToShow > 6) getString(R.string.see_less) else getString(R.string.see_more)
+        btnSeeMore.text =
+            if (productsToShow > 6) getString(R.string.see_less) else getString(R.string.see_more)
     }
 
     override fun onNewItemAdded() {
@@ -197,9 +199,9 @@ class MainActivity :
     override fun onEditedItem() {
         startLoading()
     }
-	
-	override fun onDeletedItem() {
-		startLoading()
+
+    override fun onDeletedItem() {
+        startLoading()
     }
 
     private fun showMessage(message: String) {
@@ -208,6 +210,6 @@ class MainActivity :
 
     private fun handleException(e: Exception) {
         Log.e(TAG, e.message ?: "Unknown error")
-        Toast.makeText(this@MainActivity, getString(R.string.error_generic), Toast.LENGTH_SHORT).show()
+        showMessage(getString(R.string.error_generic))
     }
 }

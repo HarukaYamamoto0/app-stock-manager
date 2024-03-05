@@ -70,18 +70,10 @@ class DeleteProductDialogFragment : DialogFragment(), CoroutineScope {
                     deleteProductListener?.onDeletedProduct()
                     dismiss()
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Falha ao tentar apagar o produto",
-                        Toast.LENGTH_SHORT
-                    ).show()
+					showMessage("Falha ao tentar apagar o produto")
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Falha ao tentar apagar o produto",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showMessage("Falha ao tentar apagar o produto")
                 e.printStackTrace()
             }
         }

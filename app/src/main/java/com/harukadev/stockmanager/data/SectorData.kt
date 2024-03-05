@@ -16,5 +16,5 @@ data class SectorData(
     val icon: String = "https://imgur.com/1LHRHrv.png",
 
     @SerializedName("products")
-    val products: List<ProductData>
+    val products: List<ProductData> = listOf()
 ) : Serializable

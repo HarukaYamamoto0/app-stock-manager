@@ -2,11 +2,11 @@ package com.harukadev.stockmanager.ui.fragments.product
 
 import android.app.Activity
 import android.app.Dialog
+import android.graphics.Paint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,12 +22,15 @@ import com.harukadev.stockmanager.data.ProductData
 import com.harukadev.stockmanager.ui.activities.BarcodeScannerActivity
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+import com.harukadev.stockmanager.utils.addFilter
+import com.harukadev.stockmanager.utils.TextInputFilters
 
 @Suppress("DEPRECATION")
 class NewProductDialogFragment : DialogFragment(), CoroutineScope {
 
     private lateinit var productNameEditText: TextInputEditText
     private lateinit var barcodeEditText: TextInputEditText
+    private lateinit var readBarcodeButton: TextView
     private lateinit var amountEditText: TextInputEditText
     private lateinit var confirmButton: TextView
     private lateinit var cancelButton: TextView
@@ -57,8 +60,13 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
         amountEditText = view.findViewById(R.id.edittext_amount)
         confirmButton = view.findViewById(R.id.button_confirm_new_product)
         cancelButton = view.findViewById(R.id.button_cancel_new_product)
+        readBarcodeButton = view.findViewById(R.id.read_barcode_text)
 
-        productNameEditText.filters += InputFilter.AllCaps()
+        readBarcodeButton.paintFlags = readBarcodeButton.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+        productNameEditText.addFilter(TextInputFilters.allCapsFilter())
+        barcodeEditText.addFilter(TextInputFilters.numbersFilter())
+        amountEditText.addFilter(TextInputFilters.numbersFilter())
 
         confirmButton.setOnClickListener {
             val name = productNameEditText.text.toString()
@@ -71,7 +79,7 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
                 showMessage("Esse nome é muito pequeno!")
             } else if (!isBarcodeValid(barcode)) {
                 showMessage("Esse código de barras não é valido!")
-            } else if (amount == null) {
+            } else if (amount == null || amount < 1) {
                 showMessage("A quantidade não é válida!")
             } else {
                 createNewProduct(name, barcode, amount)
@@ -82,8 +90,9 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
             dismiss()
         }
 
-        barcodeEditText.setOnClickListener {
+        readBarcodeButton.setOnClickListener {
             val intent = Intent(requireContext(), BarcodeScannerActivity::class.java)
+            @Suppress("DEPRECATION")
             startActivityForResult(intent, REQUEST_CODE_BARCODE_SCANNER)
         }
     }
@@ -110,18 +119,10 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
                     newProductListener?.onNewProductAdded()
                     dismiss()
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Falha ao tentar criar o produto",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showMessage("Falha ao tentar criar o produto")
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    requireContext(),
-                    "Falha ao tentar criar o produto",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showMessage("Falha ao tentar criar o produto")
                 e.printStackTrace()
             }
         }
@@ -168,7 +169,7 @@ class NewProductDialogFragment : DialogFragment(), CoroutineScope {
     }
 
     private fun isBarcodeValid(barcode: String): Boolean {
-        val barcodePattern = Regex("^[0-9]{12,13}\$")
+        val barcodePattern = Regex("^[0-9]{12,15}\$")
         return barcode.matches(barcodePattern)
     }
 }

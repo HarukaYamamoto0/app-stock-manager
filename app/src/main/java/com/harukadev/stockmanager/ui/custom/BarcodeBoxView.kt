@@ -18,7 +18,7 @@ class BarcodeBoxView(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val cornerRadius = 10f
+        val cornerRadius = 20f
 
         paint.style = Paint.Style.STROKE
         paint.color = Color.RED

@@ -18,8 +18,8 @@ object EditTextUppercaseHelper {
 
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
-                if (text != text.toUpperCase()) {
-                    val upperCaseText = text.toUpperCase()
+                if (text != text.uppercase()) {
+                    val upperCaseText = text.uppercase()
                     editText.apply {
                         setText(upperCaseText)
                         setSelection(length())

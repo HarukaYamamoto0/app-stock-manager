@@ -31,33 +31,33 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnLogin: TextView
     private lateinit var spinner: CircularProgressIndicator
     private val mainActivityIntent by lazy { Intent(this, MainActivity::class.java) }
-	private lateinit var sharedPreferencesManager: SharedPreferencesManager
+    private lateinit var sharedPreferencesManager: SharedPreferencesManager
     private val userApi = UserAPI()
     private val TAG = "LoginActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        
-		sharedPreferencesManager = SharedPreferencesManager.getInstance(this)
-		
+
+        sharedPreferencesManager = SharedPreferencesManager.getInstance(this)
+
         isLogged()
         initializeViews()
-        
+
         editTextBirthDate.addTextChangedListener(DateTextWatcher)
 
         btnLogin.setOnClickListener {
             btnLogin.text = ""
             spinner.visibility = View.VISIBLE
-            
+
             val cpf = editTextCPF.text.toString()
             val cleanedCPF = cpf.replace(Regex("\\D"), "")
             val birthDate = editTextBirthDate.text.toString()
 
             if (cleanedCPF.isEmpty() || birthDate.isEmpty()) {
                 showMessage(getString(R.string.no_empty_fields))
-				btnLogin.text = getString(R.string.login)
-				spinner.visibility = View.INVISIBLE
+                btnLogin.text = getString(R.string.login)
+                spinner.visibility = View.INVISIBLE
             } else {
                 isValidCredentials(cleanedCPF, birthDate)
             }
@@ -90,9 +90,9 @@ class LoginActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 handleException(e)
             } finally {
-				btnLogin.text = getString(R.string.login)
-				spinner.visibility = View.INVISIBLE
-			}
+                btnLogin.text = getString(R.string.login)
+                spinner.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -104,10 +104,10 @@ class LoginActivity : AppCompatActivity() {
     private fun showMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-    
+
     private fun isLogged() {
         val logged = sharedPreferencesManager.getBoolean("logged", false)
-        
+
         if (logged) {
             startMainActivity()
         }

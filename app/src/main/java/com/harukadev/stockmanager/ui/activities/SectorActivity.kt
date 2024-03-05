@@ -1,7 +1,5 @@
 package com.harukadev.stockmanager.ui.activities
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,11 +25,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class SectorActivity :
-    AppCompatActivity(),
-    NewProductDialogFragment.NewProductListener,
-    DeleteProductDialogFragment.DeleteProductListener,
-    EditProductDialogFragment.EditItemListener {
+class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductListener,
+    DeleteProductDialogFragment.DeleteProductListener, EditProductDialogFragment.EditItemListener {
 
     companion object {
         const val DATA_SECTOR = "data_sector"
@@ -101,9 +96,7 @@ class SectorActivity :
     }
 
     private fun displaySectorData(sector: SectorData) {
-        Glide.with(this@SectorActivity)
-            .load(sector.icon)
-            .into(sectorIconImageView)
+        Glide.with(this@SectorActivity).load(sector.icon).into(sectorIconImageView)
         sectorNameTextView.text = sector.name
         totalProductsTextView.text = getString(R.string.registered_products, sector.products.size)
     }
@@ -132,39 +125,34 @@ class SectorActivity :
     private fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         recyclerViewProducts.layoutManager = layoutManager
-        adapter = ProductAdapter(
-            this,
-            allProducts,
-            object : ProductAdapter.OnProductClickListener {
-                override fun onProductClick(product: ProductData) {
-                    showMessage(product._id)
-                }
-            },
-            object : ProductAdapter.OnProductLongClickListener {
-                override fun onProductLongClick(product: ProductData, productView: View) {
-                    val popup = PopupMenu(this@SectorActivity, productView)
-                    popup.inflate(R.menu.product_options)
-                    popup.setOnMenuItemClickListener { menuItem ->
-                        val itemId = menuItem.itemId
-
-                        if (itemId == R.id.menu_edit_product) {
-                            val dialog = EditProductDialogFragment()
-                            dialog.setProductData(product)
-                            dialog.setEditItemListener(this@SectorActivity)
-                            dialog.show(supportFragmentManager, EditProductDialogFragment.TAG)
-                        } else if (itemId == R.id.menu_delete_product) {
-                            val dialog = DeleteProductDialogFragment()
-                            dialog.setProductData(product)
-                            dialog.setDeleteProductListener(this@SectorActivity)
-                            dialog.show(supportFragmentManager, DeleteProductDialogFragment.TAG)
-                        }
-
-                        true
-                    }
-                    popup.show()
-                }
+        adapter = ProductAdapter(this, allProducts, object : ProductAdapter.OnProductClickListener {
+            override fun onProductClick(product: ProductData) {
+                showMessage(product._id)
             }
-        )
+        }, object : ProductAdapter.OnProductLongClickListener {
+            override fun onProductLongClick(product: ProductData, productView: View) {
+                val popup = PopupMenu(this@SectorActivity, productView)
+                popup.inflate(R.menu.product_options)
+                popup.setOnMenuItemClickListener { menuItem ->
+                    val itemId = menuItem.itemId
+
+                    if (itemId == R.id.menu_edit_product) {
+                        val dialog = EditProductDialogFragment()
+                        dialog.setProductData(product)
+                        dialog.setEditItemListener(this@SectorActivity)
+                        dialog.show(supportFragmentManager, EditProductDialogFragment.TAG)
+                    } else if (itemId == R.id.menu_delete_product) {
+                        val dialog = DeleteProductDialogFragment()
+                        dialog.setProductData(product)
+                        dialog.setDeleteProductListener(this@SectorActivity)
+                        dialog.show(supportFragmentManager, DeleteProductDialogFragment.TAG)
+                    }
+
+                    true
+                }
+                popup.show()
+            }
+        })
         recyclerViewProducts.adapter = adapter
     }
 

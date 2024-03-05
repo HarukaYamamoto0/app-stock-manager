@@ -21,9 +21,7 @@ class EditSectorDialogFragment : DialogFragment() {
     private lateinit var editTextNameOfSector: EditText
     private lateinit var confirmButton: TextView
     private lateinit var cancelButton: TextView
-
     private lateinit var sector: SectorData
-
     private var editSectorJob: Job? = null
     private var editItemListener: EditItemListener? = null
 
@@ -45,13 +43,17 @@ class EditSectorDialogFragment : DialogFragment() {
         cancelButton = view.findViewById(R.id.button_cancel_edit_sector)
 
         editTextNameOfSector.filters += InputFilter.AllCaps()
+        editTextNameOfSector.setText(sector.name)
+
 
         confirmButton.setOnClickListener {
             val sectorName = editTextNameOfSector.text.toString().trim()
             if (sectorName.isEmpty()) {
                 showMessage("Por favor, digite o nome do setor")
-            } else if (sectorName.length > 15) {
+            } else if (sectorName.length > 19) {
                 showMessage("O nome do setor é muito longo!")
+            } else if (sectorName.length < 3) {
+                showMessage("Esse nome é muito pequeno!")
             } else {
                 editSector(sectorName)
             }

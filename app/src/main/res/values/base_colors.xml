@@ -12,13 +12,13 @@
     <color name="indianred">#C47070</color>
 
     <!-- App Colors -->
-    <color name="background">#06090B</color>
+    <color name="background">#010228</color>
     <color name="background_inverse">#06090B</color>
     <color name="text_color">#DCDDE0</color>
     <color name="text_color_inverse">#DCDDE0</color>
-    <color name="primary">#6B4BF0</color>
-    <color name="secondary">#639BD9</color>
-    <color name="secondary_dark">#1D2D4D</color>
+    <color name="primary">#90E0EF</color>
+    <color name="secondary">#0099B8</color>
+    <color name="secondary_dark">#003552</color>
     <color name="border_color">#DCDDE0</color>
     <color name="text_color_dark">#8F8E8E</color>
     <color name="ripplerPrimary">#250b8e</color>

@@ -14,7 +14,7 @@ import java.io.IOException
 
 class ProductAPI {
 
-    private val apiUrl = "https://app-stock-manager-production.up.railway.app/api/products/"
+    private val apiUrl = "https://app-stock-manager-production.up.railway.app/api/products"
     private val TAG = "ProductAPI"
     private val client = HttpClient(Android)
     private val gson = Gson()

@@ -5,7 +5,7 @@
     android:layout_marginHorizontal="30dp"
     android:background="@drawable/bg_dialog_new_sector"
     android:orientation="vertical"
-    android:padding="15dp" >
+    android:padding="15dp">
 
     <TextView
         android:id="@+id/title_edit_sector"
@@ -36,18 +36,21 @@
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
         app:counterEnabled="true"
-        app:counterMaxLength="15"
+        app:counterMaxLength="25"
         app:endIconMode="clear_text"
         app:hintTextColor="@color/text_color"
         app:placeholderText="Frios"
-        app:placeholderTextColor="@color/secondary" >
+        app:placeholderTextColor="@color/secondary">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textInputEditText_name_of_sector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_edittext"
-            android:imeOptions="actionNext"
+            android:ems="25"
+            android:textAllCaps="true"
+            android:imeOptions="actionDone"
+            android:maxLength="25"
             android:maxLines="1"
             android:textColor="@color/secondary"
             android:textCursorDrawable="@drawable/cursor" />
@@ -58,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:gravity="right"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/button_cancel_edit_sector"
