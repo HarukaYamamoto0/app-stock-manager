@@ -3,18 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background" >
 
     <RelativeLayout
         android:id="@+id/layout_infos_sector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
         android:background="@color/secondary_dark"
         android:elevation="9dp"
-        android:paddingHorizontal="@dimen/padding_activities_horizontal"
-        android:paddingTop="@dimen/padding_activities_vertical"
         android:paddingBottom="15dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingHorizontal="@dimen/padding_activities_horizontal"
+        android:paddingTop="@dimen/padding_activities_vertical" >
 
         <LinearLayout
             android:id="@+id/layout_imageview_sector_icon"
@@ -22,15 +22,15 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
             android:background="@drawable/bg_layout_sector_icon"
-            android:padding="10dp">
+            android:padding="10dp" >
 
             <ImageView
                 android:id="@+id/imageview_sector_icon"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:importantForAccessibility="no"
-                app:tint="@color/text_color"
-                tools:src="@drawable/ic_storefront" />
+                android:src="@drawable/ic_storefront"
+                app:tint="@color/text_color" />
         </LinearLayout>
 
         <TextView
@@ -83,7 +83,7 @@
             app:hintTextAppearance="@style/hint_bold"
             app:hintTextColor="@color/secondary"
             app:startIconDrawable="@drawable/ic_search"
-            app:startIconTint="@color/primary">
+            app:startIconTint="@color/primary" >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edittext_search_by_product"
@@ -99,41 +99,49 @@
 
     <RelativeLayout
         android:id="@+id/layout_recyclerView_products"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_infos_sector"
         android:background="@color/background"
         android:elevation="9dp"
         android:padding="5dp"
         android:paddingBottom="25dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/fab_new_product"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_infos_sector">
+        android:visibility="gone" >
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_products"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout_products"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            tools:listitem="@layout/layout_product" />
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview_title_sectors"
+            android:layout_marginTop="7dp"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:scrollIndicators="right"
+            android:scrollbars="vertical" >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/layout_product" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </RelativeLayout>
 
     <include
         android:id="@+id/layout_loading_data"
-        layout="@layout/layout_loading_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_infos_sector" />
+        app:layout_constraintTop_toBottomOf="@id/layout_infos_sector"
+        layout="@layout/layout_loading_data" />
 
     <include
         android:id="@+id/layout_no_products"
-        layout="@layout/layout_no_products"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/layout_infos_sector" />
-
+        app:layout_constraintTop_toBottomOf="@id/layout_infos_sector"
+        layout="@layout/layout_no_products"
+        android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_new_product"
@@ -141,14 +149,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="@color/secondary"
-        android:elevation="9dp"
-        android:importantForAccessibility="no"
-        android:padding="15dp"
-        app:borderWidth="0dp"
-        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:backgroundTint="@color/secondary"
+        android:padding="15dp"
+        app:borderWidth="0dp"
+        app:elevation="19dp"
+        app:fabSize="normal"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.fab.rectangle"
         app:srcCompat="@drawable/ic_add"
         app:tint="@color/black" />

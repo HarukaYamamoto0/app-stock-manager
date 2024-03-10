@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:fillViewport="true"
     android:orientation="vertical"
     tools:context=".ui.activities.MainActivity" >
 
@@ -14,7 +13,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@color/secondary_dark"
-        android:elevation="9dp"
         android:paddingBottom="15dp"
         android:paddingHorizontal="@dimen/padding_activities_horizontal"
         android:paddingTop="@dimen/padding_activities_vertical" >
@@ -84,8 +82,8 @@
     <RelativeLayout
         android:id="@+id/layout_2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_infos"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_infos"
         android:background="@color/background"
         android:paddingBottom="15dp"
@@ -114,17 +112,23 @@
             android:textSize="15dp"
             tools:text="Veja Mais" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleview_sector_icon"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout_sector"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/textview_title_sectors"
             android:layout_marginTop="7dp"
-            android:gravity="center"
-            android:overScrollMode="never"
-            android:scrollIndicators="none"
-            android:scrollbarSize="0dp"
-            tools:listitem="@layout/layout_sector_icon" />
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:scrollIndicators="right"
+            android:scrollbars="vertical" >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycleview_sector_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/layout_sector_icon" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </RelativeLayout>
 
     <include

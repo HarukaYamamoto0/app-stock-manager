@@ -88,5 +88,11 @@
     "excludes": [],
     "groupId": "androidx.camera",
     "versionName": "1.0.0-alpha28"
+  },
+  {
+    "artifactId": "swiperefreshlayout",
+    "excludes": [],
+    "groupId": "androidx.swiperefreshlayout",
+    "versionName": "1.2.0-alpha01"
   }
 ]

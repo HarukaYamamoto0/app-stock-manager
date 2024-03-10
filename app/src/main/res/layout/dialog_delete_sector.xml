@@ -5,7 +5,7 @@
     android:layout_marginHorizontal="30dp"
     android:background="@drawable/bg_dialog_new_sector"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:padding="15dp" >
 
     <TextView
         android:id="@+id/title_delete_sector"
@@ -38,18 +38,16 @@
         app:counterEnabled="true"
         app:counterMaxLength="19"
         app:endIconMode="clear_text"
-        app:hintTextColor="@color/text_color"
-        app:placeholderTextColor="@color/secondary">
+        app:hintTextColor="@color/text_color" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textInputEditText_name_of_sector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_edittext"
-            android:imeOptions="actionNext"
+            android:ems="19"
             android:maxLength="19"
             android:maxLines="1"
-            android:textAllCaps="true"
             android:textColor="@color/secondary"
             android:textCursorDrawable="@drawable/cursor" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -59,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:gravity="right"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/button_cancel_delete_sector"

@@ -10,19 +10,12 @@ import com.harukadev.stockmanager.data.SectorData
 import android.util.Log
 
 class SectorIconViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    private val iconView: ImageView = itemView.findViewById(R.id.imageview_icon)
-    private val nameView: TextView = itemView.findViewById(R.id.textview_name)
+	
+	private val nameView: TextView = itemView.findViewById(R.id.textview_name)
     private lateinit var sectorData: SectorData
 
     fun bind(sectorData: SectorData) {
         this.sectorData = sectorData
-        
-        Glide.with(itemView.context)
-            .load(sectorData.icon)
-            .placeholder(R.drawable.ic_sector_default)
-            .error(R.drawable.ic_sector_default)
-            .into(iconView)
 
         nameView.text = sectorData.name
     }

@@ -38,13 +38,12 @@ class EditSectorDialogFragment : DialogFragment() {
 
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        editTextNameOfSector = view.findViewById(R.id.textInputEditText_name_of_sector)
+        editTextNameOfSector = view.findViewById(R.id.textInputEditText_name_of_edit_sector)
         confirmButton = view.findViewById(R.id.button_confirm_edit_sector)
         cancelButton = view.findViewById(R.id.button_cancel_edit_sector)
 
         editTextNameOfSector.filters += InputFilter.AllCaps()
         editTextNameOfSector.setText(sector.name)
-
 
         confirmButton.setOnClickListener {
             val sectorName = editTextNameOfSector.text.toString().trim()
@@ -78,7 +77,6 @@ class EditSectorDialogFragment : DialogFragment() {
                     SectorData(
                         _id = sector._id,
                         name = sectorName ?: sector.name,
-                        icon = sector.icon,
                         products = sector.products
                     )
                 )

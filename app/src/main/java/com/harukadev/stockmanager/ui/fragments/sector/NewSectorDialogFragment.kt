@@ -18,13 +18,13 @@ import com.harukadev.stockmanager.api.SectorAPI
 import com.harukadev.stockmanager.data.SectorData
 import kotlinx.coroutines.*
 import android.widget.ImageView
+
 class NewSectorDialogFragment : DialogFragment() {
 
     interface NewItemListener {
         fun onNewItemAdded()
     }
 
-    private lateinit var sla: ImageView
     private lateinit var editTextNameOfSector: EditText
     private lateinit var confirmButton: TextView
     private lateinit var cancelButton: TextView
@@ -45,12 +45,10 @@ class NewSectorDialogFragment : DialogFragment() {
 
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        sla = view.findViewById(R.id.sla)
-        editTextNameOfSector = view.findViewById(R.id.textInputEditText_name_of_sector)
+        editTextNameOfSector = view.findViewById(R.id.textInputEditText_name_of_new_sector)
         confirmButton = view.findViewById(R.id.button_confirm_new_sector)
         cancelButton = view.findViewById(R.id.button_cancel_new_sector)
 
-        sla.setImageResource(R.drawable.ic_spa)
         confirmButton.setOnClickListener {
             val sectorName = editTextNameOfSector.text.toString().trim()
             if (sectorName.isEmpty()) {
@@ -104,7 +102,7 @@ class NewSectorDialogFragment : DialogFragment() {
         super.onDestroy()
         createSectorJob?.cancel()
     }
-
+	
     fun setNewItemListener(listener: NewItemListener) {
         newItemListener = listener
     }

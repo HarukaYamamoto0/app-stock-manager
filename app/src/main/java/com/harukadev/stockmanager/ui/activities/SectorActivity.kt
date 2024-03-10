@@ -24,6 +24,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductListener,
     DeleteProductDialogFragment.DeleteProductListener, EditProductDialogFragment.EditItemListener {
@@ -36,6 +37,7 @@ class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductL
     private lateinit var sectorIconImageView: ImageView
     private lateinit var sectorNameTextView: TextView
     private lateinit var totalProductsTextView: TextView
+	private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerViewProductsLayout: RelativeLayout
     private lateinit var recyclerViewProducts: RecyclerView
     private lateinit var adapter: ProductAdapter
@@ -54,6 +56,7 @@ class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductL
 
         initializeViews()
         startLoading()
+		setupSwipeRefresh()
     }
 
     private fun initializeViews() {
@@ -61,6 +64,7 @@ class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductL
         sectorIconImageView = findViewById(R.id.imageview_sector_icon)
         sectorNameTextView = findViewById(R.id.textview_sector_name)
         totalProductsTextView = findViewById(R.id.textview_total_products)
+		swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout_products)
         recyclerViewProductsLayout = findViewById(R.id.layout_recyclerView_products)
         recyclerViewProducts = findViewById(R.id.recycler_view_products)
         loadingProductsLayout = findViewById(R.id.layout_loading_data)
@@ -96,7 +100,6 @@ class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductL
     }
 
     private fun displaySectorData(sector: SectorData) {
-        Glide.with(this@SectorActivity).load(sector.icon).into(sectorIconImageView)
         sectorNameTextView.text = sector.name
         totalProductsTextView.text = getString(R.string.registered_products, sector.products.size)
     }
@@ -127,7 +130,7 @@ class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductL
         recyclerViewProducts.layoutManager = layoutManager
         adapter = ProductAdapter(this, allProducts, object : ProductAdapter.OnProductClickListener {
             override fun onProductClick(product: ProductData) {
-                showMessage(product._id)
+                //showMessage(product._id)
             }
         }, object : ProductAdapter.OnProductLongClickListener {
             override fun onProductLongClick(product: ProductData, productView: View) {
@@ -154,7 +157,22 @@ class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductL
             }
         })
         recyclerViewProducts.adapter = adapter
+		recyclerViewProducts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				if (layoutManager.findFirstCompletelyVisibleItemPosition() == 0)
+					swipeRefreshLayout.isEnabled = true
+				else
+					swipeRefreshLayout.isEnabled = false
+			}
+		})
     }
+	
+	private fun setupSwipeRefresh() {
+		swipeRefreshLayout.setOnRefreshListener {
+			startLoading()
+			swipeRefreshLayout.isRefreshing = false
+		}
+	}
 
     private fun setupSearchBar() {
         searchProductEditText.doOnTextChanged { inputText, _, _, _ ->

@@ -2,7 +2,7 @@
 
     <!-- App -->
     <string name="app_name">Stock Manager</string>
-    <string name="app_description">A app de gestão de estoque</string>
+    <string name="app_description">Um app de gestão de estoque</string>
 
     <!-- NaN -->
     <string name="error_occurred">Ocorreu um erro. Por favor, tente novamente mais tarde.</string>

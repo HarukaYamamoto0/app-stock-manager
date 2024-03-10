@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -21,6 +21,7 @@ import com.harukadev.stockmanager.ui.fragments.sector.DeleteSectorDialogFragment
 import com.harukadev.stockmanager.utils.maskCPF
 import com.harukadev.stockmanager.utils.SharedPreferencesManager
 import kotlinx.coroutines.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class MainActivity :
     AppCompatActivity(),
@@ -31,6 +32,7 @@ class MainActivity :
     private lateinit var editTextSearchSector: EditText
     private lateinit var btnSeeMore: TextView
     private lateinit var sectorIconRecyclerView: RecyclerView
+	private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var adapter: SectorIconAdapter
     private var allSectors: MutableList<SectorData> = mutableListOf()
     private lateinit var layout2RelativeLayout: RelativeLayout
@@ -54,11 +56,13 @@ class MainActivity :
         loadUserData()
         setupRecyclerView()
         startLoading()
+		setupSwipeRefresh()
     }
 
     private fun initializeViews() {
         editTextSearchSector = findViewById(R.id.edittext_search_by_sector)
         sectorIconRecyclerView = findViewById(R.id.recycleview_sector_icon)
+		swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout_sector)
         btnSeeMore = findViewById(R.id.button_see_more_sectors)
         layout2RelativeLayout = findViewById(R.id.layout_2)
         loadingDataLayout = findViewById(R.id.layout_loading_data)
@@ -80,6 +84,7 @@ class MainActivity :
             setupSearchBar()
             setupSeeMoreButton()
             setFabClickListener()
+			updateSeeMoreButtonVisibility()
         }
     }
 
@@ -100,6 +105,7 @@ class MainActivity :
         try {
             allSectors = sectorApi.getAllSectors().toMutableList()
             adapter.setData(allSectors.take(productsToShow))
+			updateSeeMoreButtonVisibility()
 
             if (allSectors.isEmpty()) {
                 noDataLayout.visibility = View.VISIBLE
@@ -113,7 +119,7 @@ class MainActivity :
     }
 
     private fun setupRecyclerView() {
-        val layoutManager = GridLayoutManager(this, 3)
+        val layoutManager = LinearLayoutManager(this)
         sectorIconRecyclerView.layoutManager = layoutManager
         adapter = SectorIconAdapter(this, allSectors,
             object : SectorIconAdapter.OnSectorClickListener {
@@ -150,7 +156,22 @@ class MainActivity :
             }
         )
         sectorIconRecyclerView.adapter = adapter
+		sectorIconRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+			override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+				if (layoutManager.findFirstCompletelyVisibleItemPosition() == 0)
+					swipeRefreshLayout.isEnabled = true
+				else
+					swipeRefreshLayout.isEnabled = false
+			}
+		})
     }
+	
+	private fun setupSwipeRefresh() {
+		swipeRefreshLayout.setOnRefreshListener {
+			startLoading()
+			swipeRefreshLayout.isRefreshing = false
+		}
+	}
 
     private fun setupSearchBar() {
         editTextSearchSector.doOnTextChanged { inputText, _, _, _ ->
@@ -194,14 +215,17 @@ class MainActivity :
         loadingDataLayout.visibility = View.GONE
         layout2RelativeLayout.visibility = View.VISIBLE
         startLoading()
+		updateSeeMoreButtonVisibility()
     }
 
     override fun onEditedItem() {
         startLoading()
+		updateSeeMoreButtonVisibility()
     }
 
     override fun onDeletedItem() {
         startLoading()
+		updateSeeMoreButtonVisibility()
     }
 
     private fun showMessage(message: String) {
