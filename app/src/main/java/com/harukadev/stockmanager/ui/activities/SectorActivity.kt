@@ -180,7 +180,8 @@ class SectorActivity : AppCompatActivity(), NewProductDialogFragment.NewProductL
                 allProducts
             } else {
                 allProducts.filter { product ->
-                    product.name.contains(inputText.toString(), ignoreCase = true)
+                    product.name.contains(inputText.toString(), ignoreCase = true) ||
+					product.barcode.contains(inputText.toString(), ignoreCase = true)
                 }
             }
             adapter.setData(filteredList)

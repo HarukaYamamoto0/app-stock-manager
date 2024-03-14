@@ -21,6 +21,7 @@ import android.view.View
 import com.harukadev.stockmanager.utils.DateTextWatcher
 import com.harukadev.stockmanager.utils.SharedPreferencesManager
 import kotlinx.coroutines.DelicateCoroutinesApi
+import com.harukadev.stockmanager.utils.CPFTextWatcher;
 
 class LoginActivity : AppCompatActivity() {
 
@@ -43,7 +44,8 @@ class LoginActivity : AppCompatActivity() {
 
         isLogged()
         initializeViews()
-
+		
+		//editTextCPF.addTextChangedListener(CPFTextWatcher)
         editTextBirthDate.addTextChangedListener(DateTextWatcher)
 
         btnLogin.setOnClickListener {

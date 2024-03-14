@@ -17,7 +17,7 @@ class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(productData: ProductData) {
         this.productData = productData
 
-        nameView.text = productData.name
+        nameView.text = productData.name.uppercase()
 		barcodeView.text = productData.barcode
 		amountView.text = productData.quantity.toString()
     }
